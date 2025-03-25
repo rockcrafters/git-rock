@@ -1,4 +1,3 @@
-# Warning: This workflow is designed to fail. When merging in a PR, pushing an empty commit will bypass checks and allow the PR to be merged.
 name: Build Rock
 
 on:
@@ -23,8 +22,39 @@ jobs:
     with:
       oci-archive-name: "git.rock"
 
+  get-tags:
+    needs: [build]
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.get-tags.outputs.tags }}
+    steps:
+      - name: Download Rock
+        uses: actions/download-artifact@v4
+        with:
+          name: "git.rock"
+
+      - name: Get Tags For Upload
+        id: get-tags
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $PWD:/workdir -w /workdir \
+            "quay.io/skopeo/stable:v1.15.1" \
+            copy --insecure-policy\
+            oci-archive:git.rock \
+            docker-daemon:git:latest
+
+          ver=$(docker run --rm -i git:latest --version | cut -d" " -f3)
+          
+          # space separated list of repo:tags pairs
+          echo "tags=\"git:latest \
+          git:${ver} \
+          git:${ver}-24.04_stable \
+          git:${ver}-24.04_beta \
+          git:${ver}-24.04_edge \
+          git:${ver}-24.04_candidate\"" >> "$GITHUB_OUTPUT"
+
   upload:
-    needs: [test]
+    needs: [test, get-tags]
     runs-on: ubuntu-latest
     steps:
 
@@ -38,13 +68,12 @@ jobs:
           REG_USER: ${{ github.actor }}
           REG_PASW: ${{ secrets.GITHUB_TOKEN }}
           IMG_NAME: "git.rock"
-          REP_NAME: "git"
         run: |
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+          for name_tag in ${{ needs.get-tags.outputs.tags }}; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
             -v $PWD:/workdir -w /workdir \
             "quay.io/skopeo/stable:v1.15.1" \
             copy --dest-creds=${REG_USER}:${REG_PASW} \
             oci-archive:${IMG_NAME} \
-            docker://ghcr.io/rockcrafters/${REP_NAME}:latest
-
-
+            docker://ghcr.io/rockcrafters/${name_tag}
+          done
