@@ -44,14 +44,18 @@ jobs:
             docker-daemon:git:latest
 
           ver=$(docker run --rm -i git:latest --version | cut -d" " -f3)
+          tags=latest
           
-          # space separated list of repo:tags pairs
-          echo "tags=\"git:latest \
-          git:${ver} \
-          git:${ver}-24.04_stable \
-          git:${ver}-24.04_beta \
-          git:${ver}-24.04_edge \
-          git:${ver}-24.04_candidate\"" >> "$GITHUB_OUTPUT"
+          tags="$tags git:$ver"
+          tags="$tags git:$ver-24.04_stable"
+          tags="$tags git:$ver-24.04_beta"
+          tags="$tags git:$ver-24.04_edge"
+          tags="$tags git:$ver-24.04_candidate"
+          tags="$tags git:$ver-24.04_stable"
+          
+          # set tags as an output for the next job
+          echo writing tags: $tags
+          echo "tags=\"$tags\"" >> "$GITHUB_OUTPUT"
 
   upload:
     needs: [test, get-tags]
