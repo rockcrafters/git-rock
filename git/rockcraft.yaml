@@ -6,8 +6,7 @@ version: 'latest'
 summary: A lightweight Git package for version control and CI/CD.
 description: |
   This project provides a lightweight Git package for version control 
-  and CI/CD It includes essential Git binaries and HTTP support for 
-  streamlined version control operations.
+  and CI/CD. It includes essential Git binaries and HTTP support.
 platforms: 
   amd64:
   # arm64:
