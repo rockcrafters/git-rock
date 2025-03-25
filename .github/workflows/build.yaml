@@ -55,7 +55,7 @@ jobs:
           
           # set tags as an output for the next job
           echo writing tags: $tags
-          echo "tags=\"$tags\"" >> "$GITHUB_OUTPUT"
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
 
   upload:
     needs: [test, get-tags]
@@ -73,12 +73,13 @@ jobs:
           NAMESPACE: "rockcrafters"
         run: |
           for name_tag in ${{ needs.get-tags.outputs.tags }}; do
-            echo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
             -v $PWD:/workdir -w /workdir \
             "quay.io/skopeo/stable:v1.15.1" \
             copy \
             --dest-username ${{ github.actor }} \
+            --dest-password ${{ secrets.GITHUB_TOKEN }} \
             --multi-arch all \
-            oci-archive:${IMG_NAME}:latest \
+            oci-archive:${IMG_NAME} \
             docker://ghcr.io/${NAMESPACE}/${name_tag}
           done
