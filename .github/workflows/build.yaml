@@ -43,7 +43,7 @@ jobs:
             oci-archive:git.rock \
             docker-daemon:git:latest
 
-          ver=$(docker run --rm -i git:latest --version | cut -d" " -f3)
+          ver=$(docker run --rm -i git:latest exec git version | cut -d" " -f3)
           tags=latest
           
           tags="$tags git:$ver"
