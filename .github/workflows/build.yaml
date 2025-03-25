@@ -46,6 +46,7 @@ jobs:
           ver=$(docker run --rm -i git:latest exec git version | cut -d" " -f3)
           tags=latest
           
+          # additional tags
           tags="$tags git:$ver"
           tags="$tags git:$ver-24.04_stable"
           tags="$tags git:$ver-24.04_beta"
@@ -67,7 +68,7 @@ jobs:
         with:
           name: "git.rock"
 
-      - name: Upload Rock
+      - name: Upload Rock to GHCR
         env:
           IMG_NAME: "git.rock"
           NAMESPACE: "rockcrafters"
