@@ -4,12 +4,14 @@ name: Build Rock
 on:
   push:
   workflow_dispatch:
+  schedule:
+    - cron: "0 0 */14 * *" # Trigger every 2 weeks at midnight UTC
 
 jobs:
   build:
     uses: canonical/oci-factory/.github/workflows/Build-Rock.yaml@main
     with:
-      oci-archive-name: "git"
+      oci-archive-name: "git.rock"
       rock-repo: rockcrafters/git-rock
       rock-repo-commit: main
       rockfile-directory: git
@@ -19,19 +21,30 @@ jobs:
     uses: canonical/oci-factory/.github/workflows/Test-Rock.yaml@main
     needs: [build]
     with:
-      oci-archive-name: "git"
+      oci-archive-name: "git.rock"
 
-  # upload:
-  #   needs: [test]
-  #   runs-on: ubuntu-latest
-  #   steps:
+  upload:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
 
-  #     - name: Login to GHCR
-  #       uses: docker/login-action@v2
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Rock
+        uses: actions/download-artifact@v4
+        with:
+          name: "git.rock"
+
+      - name: Upload Rock
+        env:
+          REG_USER: ${{ github.actor }}
+          REG_PASW: ${{ secrets.GITHUB_TOKEN }}
+          IMG_NAME: "git.rock"
+          REP_NAME: "git"
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $PWD:/workdir -w /workdir \
+            "quay.io/skopeo/stable:v1.15.1" \
+            copy --dest-creds=${REG_USER}:${REG_PASW} \
+            oci-archive:${IMG_NAME} \
+            docker://ghcr.io/rockcrafters/${REP_NAME}:latest
 
 
-          
