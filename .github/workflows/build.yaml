@@ -13,9 +13,25 @@ jobs:
       rock-repo: rockcrafters/git-rock
       rock-repo-commit: main
       rockfile-directory: git
+      arch-map: '{"amd64": "ubuntu-latest"}'
 
   test:
     uses: canonical/oci-factory/.github/workflows/Test-Rock.yaml@main
     needs: [build]
     with:
       oci-archive-name: "git"
+
+  # upload:
+  #   needs: [test]
+  #   runs-on: ubuntu-latest
+  #   steps:
+
+  #     - name: Login to GHCR
+  #       uses: docker/login-action@v2
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+
+
+          

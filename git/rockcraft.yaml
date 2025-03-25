@@ -10,7 +10,7 @@ description: |
   streamlined version control operations.
 platforms: 
   amd64:
-  arm64:
+  # arm64:
 
 parts:
   git:
