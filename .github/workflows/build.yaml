@@ -76,10 +76,10 @@ jobs:
             docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
             -v $PWD:/workdir -w /workdir \
             "quay.io/skopeo/stable:v1.15.1" \
-            copy --dest-creds=${REG_USER}:${REG_PASW} \
+            copy \
             --dest-username ${{ github.actor }} \
             --dest-password ${{ secrets.GITHUB_TOKEN }} \
             --multi-arch all \
-            oci-archive:${IMG_NAME} \
+            oci-archive:${IMG_NAME}:latest \
             docker://ghcr.io/${NAMESPACE}/${name_tag}
           done
