@@ -14,7 +14,7 @@ jobs:
       rock-repo: rockcrafters/git-rock
       rock-repo-commit: main
       rockfile-directory: git
-      arch-map: '{"amd64": "ubuntu-latest"}'
+      arch-map: '{"amd64": ["ubuntu-latest"], "arm64": ["ubuntu-24.04-arm"]}'
 
   test:
     uses: canonical/oci-factory/.github/workflows/Test-Rock.yaml@main
