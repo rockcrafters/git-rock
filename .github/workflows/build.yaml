@@ -47,12 +47,12 @@ jobs:
           tags="git:latest"
           
           # additional tags
-          tags="$tags git:$ver"
-          tags="$tags git:$ver-24.04_stable"
-          tags="$tags git:$ver-24.04_beta"
-          tags="$tags git:$ver-24.04_edge"
-          tags="$tags git:$ver-24.04_candidate"
-          tags="$tags git:$ver-24.04_stable"
+          tags="$tags $ver"
+          tags="$tags $ver-24.04_stable"
+          tags="$tags $ver-24.04_beta"
+          tags="$tags $ver-24.04_edge"
+          tags="$tags $ver-24.04_candidate"
+          tags="$tags $ver-24.04_stable"
           
           # set tags as an output for the next job
           echo writing tags: $tags
