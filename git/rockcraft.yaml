@@ -9,7 +9,7 @@ description: |
   and CI/CD. It includes essential Git binaries and HTTP support.
 platforms: 
   amd64:
-  # arm64:
+  arm64:
 
 parts:
   git:
