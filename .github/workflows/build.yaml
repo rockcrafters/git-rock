@@ -44,7 +44,7 @@ jobs:
             docker-daemon:git:latest
 
           ver=$(docker run --rm -i git:latest exec git version | cut -d" " -f3)
-          tags="git:latest"
+          tags="latest"
           
           # additional tags
           tags="$tags $ver"
